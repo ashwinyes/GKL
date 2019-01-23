@@ -16,7 +16,7 @@ public class IntelInflaterFactory extends InflaterFactory {
     private boolean intelInflaterSupported;
 
     public IntelInflaterFactory(File tmpDir) {
-        intelInflaterSupported = new IntelInflater().load(tmpDir);
+        intelInflaterSupported = false;
     }
 
     public IntelInflaterFactory() {
@@ -24,11 +24,8 @@ public class IntelInflaterFactory extends InflaterFactory {
     }
 
     public Inflater makeInflater(final boolean nowrap) {
-        if (intelInflaterSupported && nowrap) {
-            return new IntelInflater(nowrap);
-        }
         logger.warn("IntelInflater is not supported, using Java.util.zip.Inflater");
-        return new Inflater(nowrap);
+        return new IntelInflater(nowrap);
     }
 
     public boolean usingIntelInflater() {

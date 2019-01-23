@@ -39,54 +39,13 @@ import java.util.zip.Inflater;
  * Provides a native Inflater implementation accelerated for the Intel Architecture.
  */
 public final class IntelInflater extends Inflater implements NativeLibrary {
-    private static final String NATIVE_LIBRARY_NAME = "gkl_compression";
-    private static boolean initialized = false;
-
-    /**
-     * Loads the native library, if it is supported on this platform. <p>
-     * Returns false if AVX is not supported. <br>
-     * Returns false if the native library cannot be loaded for any reason. <br>
-     * Initializes the native library after the first load. <br>
-     *
-     * @param tempDir  directory where the native library is extracted or null to use the system temp directory
-     * @return  true if the native library is supported and loaded, false otherwise
-     */
     @Override
     public synchronized boolean load(File tempDir) {
-
-        if (!NativeLibraryLoader.load(tempDir, NATIVE_LIBRARY_NAME)) {
-            return false;
-        }
-        if (!initialized) {
-            initNative();
-            initialized = true;
-        }
-        return true;
+        return false;
     }
 
-    private long lz_stream;
-    private byte[] inputBuffer;
-    private int inputBufferLength;
-    private int inputBufferOffset;
-    private boolean finished;
-    private boolean nowrap;
-
-    private static native void initNative();
-    private native void resetNative(boolean nowrap);
-    private native int inflateNative( byte[] b, int off, int len);
-    private native void endNative();
-
-    /**
-     * Creates a new compressor using the specified compression level.
-     * If 'nowrap' is true then the ZLIB header and checksum fields will
-     * not be used in order to support the compression format used in
-     * both GZIP and PKZIP.
-     * @param nowrap if true then use GZIP compatible compression
-     */
     public IntelInflater(boolean nowrap) {
-      //  initFieldsNative();
-        this.nowrap = nowrap;
-
+        super(nowrap);
     }
 
     /**
@@ -94,91 +53,7 @@ public final class IntelInflater extends Inflater implements NativeLibrary {
      * Compressed data will be generated in ZLIB format.
      */
     public IntelInflater() {
-        this(false);
+        super(false);
     }
 
-    @Override
-    public void reset() {
-        resetNative(nowrap);
-        inputBuffer = null;
-        inputBufferLength = 0;
-        finished = false;
-    }
-
-    /**
-     * Sets input data for compression. This should be called whenever
-     * needsInput() returns true indicating that more input data is required.
-     * @param b the input data bytes
-     * @param off the start offset of the data
-     * @param len the length of the data
-     * @see IntelDeflater#needsInput
-     */
-    @Override
-    public void setInput(byte[] b, int off, int len) throws NullPointerException {
-        if(lz_stream == 0) reset();
-        if(b == null) {
-            throw new NullPointerException("Input is null");
-        }
-        if(len <= 0) {
-            throw new NullPointerException("Input buffer length is zero.");
-        }
-        inputBuffer = b;
-        inputBufferOffset = off;
-        inputBufferLength = len;
-
-    }
-
-    /**
-     * Compresses the input data and fills specified buffer with compressed
-     * data. Returns actual number of bytes of compressed data. A return value
-     * of 0 indicates that {@link #needsInput() needsInput} should be called
-     * in order to determine if more input data is required.
-     *
-     * @param b the buffer for the compressed data
-     * @param off the start offset of the data
-     * @param len the maximum number of bytes of compressed data
-     * @return the actual number of bytes of compressed data written to the
-     *         output buffer
-     */
-    @Override
-    public int inflate (byte[] b, int off, int len ) {
-        return inflateNative(b, off, len);
-    }
-
-    /**
-     * Returns true if the end of the compressed data output stream has
-     * been reached.
-     * @return true if the end of the compressed data output stream has
-     * been reached
-     */
-    @Override
-    public int inflate (byte[] b ) {
-        return inflateNative( b, 0, b.length);
-    }
-
-    /**
-     * Returns true if the end of the compressed data output stream has
-     * been reached.
-     * @return true if the end of the compressed data output stream has
-     * been reached
-     */
-    @Override
-    public boolean finished() {
-        return finished;
-    }
-
-    /**
-     * Closes the compressor and discards any unprocessed input.
-     * This method should be called when the compressor is no longer
-     * being used, but will also be called automatically by the
-     * finalize() method. Once this method is called, the behavior
-     * of the IntelDeflater object is undefined.
-     */
-    @Override
-    public void end() {
-        if(lz_stream != 0) {
-            endNative();
-            lz_stream = 0;
-        }
-    }
 }

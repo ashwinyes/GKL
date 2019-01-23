@@ -15,7 +15,7 @@ public class IntelDeflaterFactory extends DeflaterFactory {
     private boolean intelDeflaterSupported;
 
     public IntelDeflaterFactory(File tmpDir) {
-        intelDeflaterSupported = new IntelDeflater().load(tmpDir);
+        intelDeflaterSupported = false;
     }
 
     public IntelDeflaterFactory() {
@@ -30,13 +30,8 @@ public class IntelDeflaterFactory extends DeflaterFactory {
      * @return a Deflater object
      */
     public Deflater makeDeflater(final int compressionLevel, final boolean gzipCompatible) {
-        if (intelDeflaterSupported) {
-            if ((compressionLevel == 1 && gzipCompatible) || compressionLevel != 1) {
-                return new IntelDeflater(compressionLevel, gzipCompatible);
-            }
-        }
         logger.warn("IntelDeflater is not supported, using Java.util.zip.Deflater");
-        return new Deflater(compressionLevel, gzipCompatible);
+        return new IntelDeflater(compressionLevel, gzipCompatible);
     }
 
     public boolean usingIntelDeflater() {
