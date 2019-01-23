@@ -4,14 +4,11 @@
 #include <vector>
 #include <math.h>
 #include <debug.h>
-#include <avx.h>
 #include <assert.h>
+#include <neon.h>
 #include "IntelPairHmm.h"
 #include "pairhmm_common.h"
-#include "avx_impl.h"
-#ifndef __APPLE__
-  #include "avx512_impl.h"
-#endif
+#include "neon_impl.h"
 #include "Context.h"
 #include "shacc_pairhmm.h"
 #include "JavaData.h"
@@ -64,31 +61,18 @@ JNIEXPORT void JNICALL Java_com_intel_gkl_pairhmm_IntelPairHmm_initNative
   g_use_fpga = use_fpga;
 
   // enable FTZ
-  if (_MM_GET_FLUSH_ZERO_MODE() != _MM_FLUSH_ZERO_ON) {
+  if (get_ftz()) {
     DBG("Flush-to-zero (FTZ) is enabled when running PairHMM");
   }
-  _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
+  set_ftz();
 
-  // set function pointers
-  if(is_avx512_supported())
-  {
-#ifndef __APPLE__
-    DBG("Using CPU-supported AVX-512 instructions");
-    g_compute_full_prob_float = compute_fp_avx512s;
-    g_compute_full_prob_double = compute_fp_avx512d;
-#else
-    assert(false);
-#endif
-  }
-  else
-  {
-    g_compute_full_prob_float = compute_fp_avxs;
-    g_compute_full_prob_double = compute_fp_avxd;
-  }
+  g_compute_full_prob_float = compute_fp_neons;
+  g_compute_full_prob_double = compute_fp_neond;
 
   // init convert char table
   ConvertChar::init();
   DBG("Exit");
+  if (env->ExceptionCheck()) env->ExceptionClear();
 }
 
 /*
@@ -142,6 +126,7 @@ JNIEXPORT void JNICALL Java_com_intel_gkl_pairhmm_IntelPairHmm_computeLikelihood
   // release Java data
   javaData.releaseData(env);
   DBG("Exit");
+  if (env->ExceptionCheck()) env->ExceptionClear();
 }
 
 
@@ -153,5 +138,6 @@ JNIEXPORT void JNICALL Java_com_intel_gkl_pairhmm_IntelPairHmm_computeLikelihood
 JNIEXPORT void JNICALL Java_com_intel_gkl_pairhmm_IntelPairHmm_doneNative
 (JNIEnv* env, jobject obj)
 {
+  if (env->ExceptionCheck()) env->ExceptionClear();
 
 }

@@ -48,10 +48,6 @@ public class IntelPairHmm implements PairHMMNativeBinding {
             return false;
         }
 
-        if(!gklUtils.isAvxSupported()) {
-            return false;
-        }
-
         return NativeLibraryLoader.load(tempDir, nativeLibraryName);
     }
 
@@ -65,10 +61,6 @@ public class IntelPairHmm implements PairHMMNativeBinding {
             args = new PairHMMNativeArguments();
             args.useDoublePrecision = false;
             args.maxNumberOfThreads = 1;
-        }
-
-        if(!useFpga && gklUtils.isAvx512Supported()) {
-            logger.info("Using CPU-supported AVX-512 instructions");
         }
 
         if (args.useDoublePrecision && useFpga) {
