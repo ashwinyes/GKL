@@ -25,19 +25,7 @@ import java.util.Arrays;
 
 public class IntelSmithWaterman implements SWAlignerNativeBinding {
 
-    private final static Logger logger = LogManager.getLogger(IntelSmithWaterman.class);
-    private static final String NATIVE_LIBRARY_NAME = "gkl_smithwaterman";
-    private String nativeLibraryName = "gkl_smithwaterman";
-    private static boolean initialized = false;
-    private IntelGKLUtils gklUtils = new IntelGKLUtils();
-
-    void setNativeLibraryName(String nativeLibraryName) {
-        this.nativeLibraryName = nativeLibraryName;
-    }
-
     public IntelSmithWaterman() {
-
-        setNativeLibraryName(NATIVE_LIBRARY_NAME);
     }
 
 
@@ -52,35 +40,7 @@ public class IntelSmithWaterman implements SWAlignerNativeBinding {
 
     @Override
     public synchronized boolean load(File tempDir) {
-        boolean isLoaded = gklUtils.load(null);
-
-        if(!isLoaded)
-        {
-            logger.warn("Intel GKL Utils not loaded");
-            return false;
-        }
-
-        if (!gklUtils.isAvxSupported() || !gklUtils.isAvx2Supported()) {
-            return false;
-        }
-
-        if (!NativeLibraryLoader.load(tempDir, NATIVE_LIBRARY_NAME)) {
-            return false;
-        }
-        if (!initialized) {
-
-            initialized = true;
-        }
-
-        if(gklUtils.isAvx512Supported()) {
-            logger.info("Using CPU-supported AVX-512 instructions");
-        }
-
-        /*
-         Initializes the function pointers to use machine specific optimized code
-         */
-        initNative();
-        return true;
+        return false;
     }
 
 
@@ -95,40 +55,9 @@ public class IntelSmithWaterman implements SWAlignerNativeBinding {
     @Override
     public SWNativeAlignerResult align(byte[] refArray, byte[] altArray, SWParameters parameters, SWOverhangStrategy overhangStrategy)
     {
-        int intStrategy =  getStrategy(overhangStrategy);
-        byte[] cigar = new byte[2*Integer.max(refArray.length, altArray.length)];
-
-        int offset = alignNative(refArray, altArray, cigar, parameters.getMatchValue(), parameters.getMismatchPenalty(), parameters.getGapOpenPenalty(), parameters.getGapExtendPenalty(), intStrategy);
-
-        return new SWNativeAlignerResult(new String(cigar).trim(), offset);
+        return null;
     }
 
-    public int getStrategy(SWOverhangStrategy strategy)
-    {
-        int intStrategy = 0;
 
-        switch(strategy){
-            case SOFTCLIP: intStrategy = 9;
-                break;
-            case INDEL: intStrategy = 10;
-                break;
-            case LEADING_INDEL: intStrategy = 11;
-                break;
-            case IGNORE: intStrategy = 12;
-                break;
-        }
-
-        return intStrategy;
-
-    }
-
-    public void close()
-    {
-        doneNative();
-    }
-
-    private native static void initNative();
-    private native static int alignNative(byte[] refArray, byte[] altArray, byte[] cigar, int match, int mismatch, int open, int extend, int strategy);
-    private native static void doneNative();
 }
 
