@@ -64,13 +64,13 @@ public final class IntelGKLUtils implements NativeLibrary {
         return true;
     }
 
-    private static final String TEST_RESOURCES_PATH = System.getProperty("user.dir") + "/src/test/resources/";
+    //private static final String TEST_RESOURCES_PATH = System.getProperty("user.dir") + "/src/test/resources/";
+    private static final String TEST_RESOURCES_PATH = "/home/ashwin/bigstack/gkl/GKL/src/test/resources/";
     private static final String TEST_RESOURCES_ABSPATH = new File(TEST_RESOURCES_PATH).getAbsolutePath() + "/";
 
     public static String pathToTestResource(String filename) {
         return TEST_RESOURCES_ABSPATH + filename;
     }
-
 
     public boolean getFlushToZero() {
         return getFlushToZeroNative();
@@ -78,18 +78,6 @@ public final class IntelGKLUtils implements NativeLibrary {
 
     public void setFlushToZero(boolean value) {
         setFlushToZeroNative(value);
-    }
-
-    public boolean isAvxSupported() {
-        return isAvxSupportedNative();
-    }
-
-    public boolean isAvx2Supported() {
-        return isAvx2SupportedNative();
-    }
-
-    public boolean isAvx512Supported() {
-        return isAvx512SupportedNative();
     }
 
     /**
@@ -100,10 +88,7 @@ public final class IntelGKLUtils implements NativeLibrary {
         return getAvailableOmpThreadsNative();
     }
 
+    private native int getAvailableOmpThreadsNative();
     private native boolean getFlushToZeroNative();
     private native void setFlushToZeroNative(boolean value);
-    private native boolean isAvxSupportedNative();
-    private native boolean isAvx2SupportedNative();
-    private native boolean isAvx512SupportedNative();
-    private native int getAvailableOmpThreadsNative();
 }

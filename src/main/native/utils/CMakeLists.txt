@@ -2,6 +2,8 @@
 # utils
 #---------------------------------------------------------------------
 include_directories(../common)
+include_directories(/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.191.b12-1.el7_6.aarch64/include)
+include_directories(/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.191.b12-1.el7_6.aarch64/include/linux)
 
 find_package(OpenMP)
 

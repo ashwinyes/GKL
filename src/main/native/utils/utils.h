@@ -25,30 +25,6 @@ JNIEXPORT void JNICALL Java_com_intel_gkl_IntelGKLUtils_setFlushToZeroNative
 
 /*
  * Class:     com_intel_gkl_IntelGKLUtils
- * Method:    isAvxSupportedNative
- * Signature: ()Z
- */
-JNIEXPORT jboolean JNICALL Java_com_intel_gkl_IntelGKLUtils_isAvxSupportedNative
-  (JNIEnv *, jobject);
-
-/*
- * Class:     com_intel_gkl_IntelGKLUtils
- * Method:    isAvx2SupportedNative
- * Signature: ()Z
- */
-JNIEXPORT jboolean JNICALL Java_com_intel_gkl_IntelGKLUtils_isAvx2SupportedNative
-  (JNIEnv *, jobject);
-
-/*
- * Class:     com_intel_gkl_IntelGKLUtils
- * Method:    isAvx512SupportedNative
- * Signature: ()Z
- */
-JNIEXPORT jboolean JNICALL Java_com_intel_gkl_IntelGKLUtils_isAvx512SupportedNative
-  (JNIEnv *, jobject);
-
-/*
- * Class:     com_intel_gkl_IntelGKLUtils
  * Method:    getAvailableOmpThreadsNative
  * Signature: ()I
  */
