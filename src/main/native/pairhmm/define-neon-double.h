@@ -92,7 +92,7 @@
     vdivq_f64(__v1, __v2)
 
 #define VEC_BLENDV(__v1, __v2, __maskV)         \
-    vreinterpretq_f64_s64(vbslq_s64(vreinterpretq_s64_f64(__maskV), vreinterpretq_s64_f64(__v2), vreinterpretq_s64_f64(__v1)))
+    vreinterpretq_f64_s64(vbslq_s64(vreinterpretq_u64_f64(__maskV), vreinterpretq_s64_f64(__v2), vreinterpretq_s64_f64(__v1)))
 
 #define VEC_SET1_VAL(__val)                     \
     vdupq_n_f64(__val)
@@ -101,10 +101,10 @@
     vcvtq_f64_s64(vdupq_n_s64(__ch))
 
 #define VEC_SET_LSE(__val)                      \
-    vsetq_lane_f64(__val, vdupq_n_f64(zero), 1)
+    vsetq_lane_f64(__val, vdupq_n_f64(zero), 0)
 
 #define VEC_SHIFT_LEFT_1BIT(__vs)               \
-    vshlq_n_s64(__vs, 1)
+    __vs = vshlq_n_s64(__vs, 1)
 
 #define VEC_128_SHIFT_LEFT(__vs, __im)               \
     vreinterpretq_s64_s8(vextq_s8(vdupq_n_s8(0), vreinterpretq_s8_s64(__vs), 16 - (__im)))

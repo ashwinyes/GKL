@@ -102,12 +102,12 @@
     vcvtq_f32_s32(vdupq_n_s32(__ch))
 
 #define VEC_SET_LSE(__val)                      \
-    vsetq_lane_f32(__val, vdupq_n_f32(zero), 1)
+    vsetq_lane_f32(__val, vdupq_n_f32(zero), 0)
 
 #define VEC_SHIFT_LEFT_1BIT(__vs)               \
-    vshlq_n_s32(__vs, 1)
+    __vs = vshlq_n_s32(__vs, 1)
 
-#define VEC_128_SHIFT_LEFT(__vs, __im)               \
+#define VEC_128_SHIFT_LEFT(__vs, __im)          \
     vreinterpretq_s32_s8(vextq_s8(vdupq_n_s8(0), vreinterpretq_s8_s32(__vs), 16 - (__im)))
 
 class BitMaskVec_neon_float {

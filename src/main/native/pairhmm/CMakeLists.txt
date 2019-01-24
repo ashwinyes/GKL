@@ -5,6 +5,7 @@ if(NOT APPLE)
   set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-as-needed")
 endif()
 set_property(SOURCE neon_impl.cc APPEND_STRING PROPERTY COMPILE_FLAGS " -flax-vector-conversions")
+set_property(SOURCE unit_test.cc APPEND_STRING PROPERTY COMPILE_FLAGS " -DAARCH64=1")
 
 #---------------------------------------------------------------------
 # common includes
@@ -49,4 +50,11 @@ endif()
 set(TARGET gkl_pairhmm_fpga)
 add_library(${TARGET} SHARED IntelPairHmm.cc neon_impl.cc pairhmm_common.cc)
 target_link_libraries(${TARGET} gkl_pairhmm_shacc)
+install(TARGETS ${TARGET} DESTINATION ${CMAKE_BINARY_DIR})
+
+#---------------------------------------------------------------------
+# pairhmm_shacc (stub version)
+#---------------------------------------------------------------------
+set(TARGET unit_test)
+add_executable(${TARGET} unit_test.cc pairhmm_common.cc)
 install(TARGETS ${TARGET} DESTINATION ${CMAKE_BINARY_DIR})
