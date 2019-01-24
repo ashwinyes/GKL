@@ -92,7 +92,8 @@
     vdivq_f64(__v1, __v2)
 
 #define VEC_BLENDV(__v1, __v2, __maskV)         \
-    vreinterpretq_f64_s64(vbslq_s64(vreinterpretq_u64_f64(__maskV), vreinterpretq_s64_f64(__v2), vreinterpretq_s64_f64(__v1)))
+    vreinterpretq_f64_s64(vbslq_s64(vcgeq_u64(vreinterpretq_u64_f64(__maskV), vdupq_n_u64(0x8000000000000000)),  \
+                          vreinterpretq_s64_f64(__v2), vreinterpretq_s64_f64(__v1)))
 
 #define VEC_SET1_VAL(__val)                     \
     vdupq_n_f64(__val)

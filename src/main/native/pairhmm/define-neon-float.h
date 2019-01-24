@@ -93,7 +93,8 @@
     vdivq_f32(__v1, __v2)
 
 #define VEC_BLENDV(__v1, __v2, __maskV)         \
-    vreinterpretq_f32_s32(vbslq_s32(vreinterpretq_u32_f32(__maskV), vreinterpretq_s32_f32(__v2), vreinterpretq_s32_f32(__v1)))
+    vreinterpretq_f32_s32(vbslq_s32(vcgeq_u32(vreinterpretq_u32_f32(__maskV), vdupq_n_u32(0x80000000)),  \
+                          vreinterpretq_s32_f32(__v2), vreinterpretq_s32_f32(__v1)))
 
 #define VEC_SET1_VAL(__val)                     \
     vdupq_n_f32(__val)
